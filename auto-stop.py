@@ -31,7 +31,7 @@ def get_notebook_name():
     return _logs['ResourceName']
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "h:t:c::tz", ["help","time=","ignore-connections", "time-zone"])
+    opts, args = getopt.getopt(sys.argv[1:], "h:t:c::tz", ["help","time=","ignore-connections", "time-zone="])
     if len(opts) == 0:
         raise getopt.GetoptError("No input parameters!")
     for opt, arg in opts:
@@ -44,7 +44,7 @@ try:
             port = str(arg)
         if opt in ("-c", "--ignore-connections"):
             ignore_connections = True
-        if opt in ("-tz", "--time-zone"):
+        if opt in ("--tz", "--time-zone"):
             time_zone = str(arg)
 
 except getopt.GetoptError:
@@ -54,11 +54,12 @@ except getopt.GetoptError:
 
 # 24 hour format 
 cur=time.time()
+print(time_zone)
 os.environ["TZ"]=time_zone
 time.tzset()
 
 t = time.localtime(cur)
-print(t)
+
 if t.tm_hour == shut_off_time:
     # shut off instance
     client = boto3.client('sagemaker')

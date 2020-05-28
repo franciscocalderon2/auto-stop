@@ -19,16 +19,9 @@ helpInfo = """-t, --time
     Stop notebook once idle, ignore connected users
 -h, --help
     Help information
+
+-tz, --time-zone
 """
-
-# you can set the timezone to your location using 3 Character codes found below
-# https://www.timeanddate.com/time/map/
-
-
-# 24 hour format 
-cur=time.time()
-os.environ["TZ"]="MST"
-time.tzset()
 
 
 def get_notebook_name():
@@ -38,7 +31,7 @@ def get_notebook_name():
     return _logs['ResourceName']
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "ht:p:c", ["help","time=","ignore-connections"])
+    opts, args = getopt.getopt(sys.argv[1:], "h:t:c::tz", ["help","time=","ignore-connections", "time-zone"])
     if len(opts) == 0:
         raise getopt.GetoptError("No input parameters!")
     for opt, arg in opts:
@@ -51,9 +44,18 @@ try:
             port = str(arg)
         if opt in ("-c", "--ignore-connections"):
             ignore_connections = True
+        if opt in ("-tz", "--time-zone"):
+            time_zone = str(arg)
+
 except getopt.GetoptError:
     print(usageInfo)
     exit(1)
+
+
+# 24 hour format 
+cur=time.time()
+os.environ["TZ"]=time_zone
+time.tzset()
 
 t = time.localtime(cur)
 print(t)
